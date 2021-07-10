@@ -62,6 +62,26 @@ chromium-browser http://example.com -window-size=800,480 --start-fullscreen --ki
 ```
 this is mainly kiosk mode plus ```--user-data-dir=/tmp/X```, which prevents chromium to open just another tab in the first chromium on screen 1, rather then starting a new instance. 
 
+If not done yet, disable lightdm with raspi-config
+````
+sudo raspi-config
+````
+... set to "Boot to Console login"
+
+Now copy the init script raspi3-dual from this repo to ```/etc/init.d``` and make it with ```chmod 755 /etc/init.d/raspi3-dual``` executable and run
+
+````
+sudo update-rc.d raspi3-dual defaults
+````
+to populate the script (alternatively, you can use all [other methods](https://www.dexterindustries.com/howto/run-a-program-on-your-raspberry-pi-at-startup/) to autostart). Now after a
+````
+sudo reboot
+````
+your Raspberry should start up whith everything in place.
+
+Hope, this was fun! Thomas.
+
+
 ---
 
 I used the following ressources on the web for this configuration, thanks to all the people out there for their work.

@@ -1,0 +1,59 @@
+#! /bin/sh
+### BEGIN INIT INFO
+# Provides:          raspi3-dual
+# Should-Start:      console-screen kbd acpid dbus hal consolekit
+# Required-Start:    $local_fs $remote_fs x11-common
+# Required-Stop:     $local_fs $remote_fs
+# Default-Start:     2 3 4 5
+# Default-Stop:      0 1 6
+# Short-Description: Dual independent Screens with independent X-Servers
+# Description:       Debian init script for raspi3-dual
+### END INIT INFO
+#
+# Author:       Thomas Landgraf <tl@digital-dividend.de> using lightdm sccript from Yves-Alexis Perez <corsac@debian.org> 
+#
+set -e
+
+PATH=/sbin:/bin:/usr/sbin:/usr/bin
+X11=/usr/bin/X
+PIDFILE1=/tmp/firstX.pid
+PIDFILE2=/tmp/secondX.pid
+PIDFILE3=/tmp/firstChrome.pid
+PIDFILE4=/tmp/secondChrome.pid
+CHROMEUSER=pi
+
+test -x $DAEMON || exit 0
+
+if [ -r /etc/default/locale ]; then
+  . /etc/default/locale
+  export LANG LANGUAGE
+fi
+
+#. /lib/lsb/init-functions
+
+case "$1" in
+  start)
+        $X11 :0 -layout Singlehead0 -sharevts & echo $! > $PIDFILE1
+        $X11 :1 -layout Singlehead1 -sharevts & echo $! > $PIDFILE2
+        sleep 1
+        sudo -u $CHROMEUSER chromium-browser http://example.com -window-size=1920,1200 --start-fullscreen --kiosk --incognito --noerrdialogs --disable-translate --no-first-run --fast --fast-start --disable-infobars --disable-features=TranslateUI --disk-cache-dir=/dev/null  --password-store=basic --user-data-dir=/tmp/1 --display=:1 & echo $! > $PIDFILE3
+        sudo -u $CHROMEUSER chromium-browser http://example.com -window-size=800,480 --start-fullscreen --kiosk --incognito --noerrdialogs --disable-translate --no-first-run --fast --fast-start --disable-infobars --disable-features=TranslateUI --disk-cache-dir=/dev/null  --password-store=basic --user-data-dir=/tmp/0 --display=:0 & echo $! > $PIDFILE4 
+  ;;
+  stop)
+        cat $PIDFILE4 | xargs kill && rm $PIDFILE4
+        cat $PIDFILE3 | xargs kill && rm $PIDFILE3
+        cat $PIDFILE2 | xargs kill && rm $PIDFILE2
+	cat $PIDFILE1 | xargs kill && rm $PIDFILE1
+  ;;
+  restart|force-reload)
+        $0 stop
+        sleep 1
+        $0 start
+  ;;
+  *)
+        echo "Usage: /etc/init.d/raspi3-dual {start|stop|restart|force-reload}"
+        exit 1
+  ;;
+esac
+
+exit 0
