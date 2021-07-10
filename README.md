@@ -20,7 +20,7 @@ sudo apt-get install xterm
 ````
 
 After [modifying your Raspberry](https://www.raspberrypi.org/forums/viewtopic.php?f=63&t=246384&p=1504644&hilit=Dual+framebuffer#p1504551), you got all you need (you'll find a shadow of their config files in this repo).
-
+# X-Servers
 Now we can run two independend XServers an launch an xterm on each
 
 ```
@@ -30,11 +30,11 @@ xterm -d :0
 should open an xterm on the 1st screen.
 
 ```
-sudo X :1 -layout Singlehead1 -sharevts &
+sudo X :1 -layout Singlehead1 -sharevts -nocursor &
 xterm -d :1
 ```
 
-should open an xterm on the 2nd screen.
+should open an xterm on the 2nd screen. As you see, I added ```-nocursor``` on my 2nd screen, since I want to control the 2nd Chrome from the other screen (other project).
 
 See, there are two X-Server running:
 
@@ -46,7 +46,7 @@ root      4349  4330  0 08:57 pts/3    00:00:00 sudo X :1 -layout Singlehead1
 root      4353  4349  0 08:57 tty3     00:00:00 /usr/lib/xorg/Xorg :1 -layout Singlehead1
 pi        4436  4414  0 08:58 pts/6    00:00:00 grep --color=auto X
 ```
-
+# Chrome in Kiosk mode
 to determine the resoution of your screens:
 ```
 xwininfo -root -display :0
@@ -62,6 +62,7 @@ chromium-browser http://example.com -window-size=800,480 --start-fullscreen --ki
 ```
 this is mainly kiosk mode plus ```--user-data-dir=/tmp/X```, which prevents chromium to open just another tab in the first chromium on screen 1, rather then starting a new instance. 
 
+# Startup Script
 If not done yet, disable lightdm with raspi-config
 ````
 sudo raspi-config
