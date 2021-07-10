@@ -1,12 +1,17 @@
 # raspi3-dual
 
-The main goal of this project is to set up a Rasberry 3B+ for Dual-Screen operation, running the internal Display and the HDMI as two indepedend X-Window displays. 
+The main goal of this project is to set up a Raspberry 3B+ for Dual-Screen operation, running the internal Display and the HDMI as two indepedent X-Window displays. 
 
 In this case we do **not** want the mouse to move from screen to the other **nor** mmove any windows between the screens.
 
 There are several instructions on the internet such as:
+* https://thepihut.com/blogs/raspberry-pi-tutorials/running-two-monitors-with-a-raspberry-pi-4
+* https://core-electronics.com.au/tutorials/dual-monitors-raspberry-pi-4.html
+* https://www.webosose.org/docs/guides/setup/setting-up-dual-displays/
 
 Which describe the same approach for running them as one big Desktop as we know it from Windows or MacOS.
+
+My approach is to have two independent Displays with two independent X-Servers and two independent Chromiums running in Kiosk mode.
 
 Since I am an old-school programmer, I love the vanilla X11 tools:
 
@@ -14,7 +19,9 @@ Since I am an old-school programmer, I love the vanilla X11 tools:
 sudo apt-get install xterm
 ````
 
-now we can run two independend XServers an launch an xterm on each
+After [modifying your Raspberry](https://www.raspberrypi.org/forums/viewtopic.php?f=63&t=246384&p=1504644&hilit=Dual+framebuffer#p1504551), you got all you need (you'll find a shadow of their config files in this repo).
+
+Now we can run two independend XServers an launch an xterm on each
 
 ```
 sudo X :0 -layout Singlehead0 -sharevts &
